@@ -9,13 +9,27 @@ import Map from "./components/Map/Map";
 const App = () => {
   const [places, setPlaces] = useState([]);
 
+  // const [coordinates, setCoordinates] = useState({});
+  const [coord, setCoordinates] = useState({});
+  const [bounds, setBounds] = useState(null);
+
   useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude } }) => {
+        setCoordinates({ lat: latitude, lng: longitude });
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    console.log(coord, bounds);
+
     getPlacesData().then((data) => {
       console.log(data);
 
       setPlaces(data);
     });
-  }, []);
+  }, [coord, bounds]);
 
   return (
     <>
@@ -26,7 +40,11 @@ const App = () => {
           <List />
         </Grid>
         <Grid item xs={12} md={8}>
-          <Map />
+          <Map
+            setCoordinates={setCoordinates}
+            setBounds={setBounds}
+            coord={coord}
+          />
         </Grid>
       </Grid>
     </>
